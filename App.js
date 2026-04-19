@@ -1,0 +1,44 @@
+import React from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import HomeScreen from './src/screens/HomeScreen';
+import CalendarScreen from './src/screens/CalendarScreen';
+import DayDetailScreen from './src/screens/DayDetailScreen';
+
+const Stack = createNativeStackNavigator();
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <StatusBar style="light" />
+      <Stack.Navigator
+        initialRouteName="Home"
+        screenOptions={{
+          headerStyle: { backgroundColor: '#0f0f23' },
+          headerTintColor: '#ffffff',
+          headerTitleStyle: { fontWeight: '700' },
+          contentStyle: { backgroundColor: '#0f0f23' },
+          headerShadowVisible: false,
+        }}
+      >
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Calendar"
+          component={CalendarScreen}
+          options={{ title: 'Training Plan', headerBackTitle: 'Back' }}
+        />
+        <Stack.Screen
+          name="DayDetail"
+          component={DayDetailScreen}
+          options={{ title: 'Workout', headerBackTitle: 'Back' }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}

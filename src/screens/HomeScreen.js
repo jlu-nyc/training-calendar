@@ -176,7 +176,10 @@ const webInputStyle = {
   margin: 0,
   padding: '12px 14px',
   fontSize: '16px',
-  fontFamily: 'inherit',
+  // appearance:none (below) fixes the iOS width overflow but drops the native
+  // control's system font — re-point it at the same system font so the date
+  // text renders as it did before.
+  fontFamily: '-apple-system, BlinkMacSystemFont, system-ui, sans-serif',
   color: '#ffffff',
   backgroundColor: '#2a2a4a',
   border: '1px solid #3a3a5a',

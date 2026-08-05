@@ -130,7 +130,7 @@ export const PLAN = [
       { type: ML,  miles: 15, description: '' },
       { type: GA,  miles: 7,  description: '' },
       { type: REC, miles: 5,  description: '' },
-      { type: LR,  miles: 20, description: '' },
+      { type: MP,  miles: 20, mpMiles: 10, description: '20-mile long run — last 10 at marathon pace (7:45–7:50)' },
     ],
   },
   // ─── WEEK 10 · 61 mi ─────────────────────────────────────────────────────────

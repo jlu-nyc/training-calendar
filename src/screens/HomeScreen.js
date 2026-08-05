@@ -170,9 +170,13 @@ export default function HomeScreen({ navigation }) {
 
 // Inline style object for the HTML input (StyleSheet doesn't apply to DOM elements)
 const webInputStyle = {
+  display: 'block',
   width: '100%',
+  minWidth: 0,
+  margin: 0,
   padding: '12px 14px',
   fontSize: '16px',
+  fontFamily: 'inherit',
   color: '#ffffff',
   backgroundColor: '#2a2a4a',
   border: '1px solid #3a3a5a',
@@ -180,6 +184,11 @@ const webInputStyle = {
   cursor: 'pointer',
   colorScheme: 'dark',
   boxSizing: 'border-box',
+  // iOS Safari gives date inputs an intrinsic min-width from their native
+  // appearance and won't shrink to width:100%, overflowing the card by a few
+  // pixels. Removing the native appearance lets border-box width take effect.
+  WebkitAppearance: 'none',
+  appearance: 'none',
 };
 
 const styles = StyleSheet.create({

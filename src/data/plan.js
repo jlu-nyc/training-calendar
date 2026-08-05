@@ -39,6 +39,23 @@ export const WORKOUT_TEXT_COLORS = {
   [WORKOUT_TYPES.TUNE_UP]: '#fff',
 };
 
+// Miles actually run at marathon pace on a given day. Marathon-pace runs bury
+// the MP segment inside a longer run, so each MP day carries an explicit
+// `mpMiles` field for the portion run at marathon pace.
+export function marathonPaceMiles(day) {
+  if (!day || day.type !== WORKOUT_TYPES.MARATHON_PACE) return 0;
+  return day.mpMiles || 0;
+}
+
+// Total marathon-pace miles across an entire plan.
+export function totalMarathonPaceMiles(plan) {
+  return plan.reduce(
+    (sum, week) =>
+      sum + week.days.reduce((wSum, day) => wSum + marathonPaceMiles(day), 0),
+    0
+  );
+}
+
 const R = WORKOUT_TYPES.REST;
 const REC = WORKOUT_TYPES.RECOVERY;
 const GA = WORKOUT_TYPES.GENERAL_AEROBIC;
@@ -65,7 +82,7 @@ export const PLAN = [
       { type: REC, miles: 5,  description: '' },
       { type: ML,  miles: 11, description: '' },
       { type: REC, miles: 5,  description: '' },
-      { type: MP,  miles: 15, description: '8 miles at marathon pace' },
+      { type: MP,  miles: 15, mpMiles: 8, description: '8 miles at marathon pace' },
     ],
   },
   // ─── WEEK 2 ──────────────────────────────────────────────────────────────────
@@ -91,7 +108,7 @@ export const PLAN = [
       { type: REC, miles: 5,  description: '' },
       { type: ML,  miles: 12, description: '' },
       { type: REC, miles: 5,  description: '' },
-      { type: MP,  miles: 17, description: '10 miles at marathon pace' },
+      { type: MP,  miles: 17, mpMiles: 10, description: '10 miles at marathon pace' },
     ],
   },
   // ─── WEEK 4 ──────────────────────────────────────────────────────────────────
@@ -117,7 +134,7 @@ export const PLAN = [
       { type: REC, miles: 5,  description: '' },
       { type: ML,  miles: 11, description: '' },
       { type: REC, miles: 5,  description: '' },
-      { type: MP,  miles: 15, description: '8 miles at marathon pace' },
+      { type: MP,  miles: 15, mpMiles: 8, description: '8 miles at marathon pace' },
     ],
   },
   // ─── WEEK 6 ──────────────────────────────────────────────────────────────────
@@ -130,7 +147,7 @@ export const PLAN = [
       { type: ML,  miles: 15, description: '' },
       { type: GA,  miles: 10, description: '' },
       { type: REC, miles: 6,  description: '' },
-      { type: MP,  miles: 18, description: '12 miles at marathon pace' },
+      { type: MP,  miles: 18, mpMiles: 12, description: '12 miles at marathon pace' },
     ],
   },
   // ─── WEEK 7 ──────────────────────────────────────────────────────────────────
@@ -204,7 +221,7 @@ export const PLAN = [
     days: [
       { type: R,   miles: 0,    description: 'Rest or cross-training' },
       { type: REC, miles: 12,   description: '' },
-      { type: MP,  miles: 7,    description: '2 miles at marathon pace (dress rehearsal)' },
+      { type: MP,  miles: 7,    mpMiles: 2, description: '2 miles at marathon pace (dress rehearsal)' },
       { type: REC, miles: 5,    description: '' },
       { type: REC, miles: 5,    description: '6x100m strides' },
       { type: REC, miles: 4,    description: '' },

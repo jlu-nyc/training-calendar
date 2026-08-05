@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './src/screens/HomeScreen';
 import CalendarScreen from './src/screens/CalendarScreen';
 import DayDetailScreen from './src/screens/DayDetailScreen';
+import PacesScreen from './src/screens/PacesScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -37,6 +38,11 @@ export default function App() {
           name="DayDetail"
           component={DayDetailScreen}
           options={{ title: 'Workout', headerBackTitle: 'Back' }}
+        />
+        <Stack.Screen
+          name="Paces"
+          component={PacesScreen}
+          options={{ title: 'Training Paces', headerBackTitle: 'Back' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

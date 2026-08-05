@@ -8,6 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { PLANS } from '../data/plans';
 
 const DEFAULT_RACE = (() => {
   const d = new Date();
@@ -44,6 +45,7 @@ export default function HomeScreen({ navigation }) {
   const [raceDate, setRaceDate] = useState(DEFAULT_RACE);
   const [tempDate, setTempDate] = useState(DEFAULT_RACE);
   const [showPicker, setShowPicker] = useState(false);
+  const [planKey, setPlanKey] = useState('classic');
 
   const planStart = new Date(raceDate);
   planStart.setDate(planStart.getDate() - 83);
@@ -121,11 +123,41 @@ export default function HomeScreen({ navigation }) {
         <Text style={styles.infoValue}>{toLocalDateString(planStart)}</Text>
       </View>
 
+      <View style={styles.card}>
+        <Text style={styles.cardLabel}>Plan</Text>
+        <View style={styles.planSelector}>
+          {Object.values(PLANS).map((p) => {
+            const active = planKey === p.key;
+            return (
+              <TouchableOpacity
+                key={p.key}
+                style={[styles.planOption, active && styles.planOptionActive]}
+                onPress={() => setPlanKey(p.key)}
+              >
+                <Text style={[styles.planOptionName, active && styles.planOptionNameActive]}>
+                  {p.name}
+                </Text>
+                <Text style={[styles.planOptionSub, active && styles.planOptionSubActive]}>
+                  {p.subtitle}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
+
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Calendar', { raceDate: raceDate.toISOString() })}
+        onPress={() => navigation.navigate('Calendar', { raceDate: raceDate.toISOString(), planKey })}
       >
         <Text style={styles.buttonText}>View Training Plan</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.buttonSecondary}
+        onPress={() => navigation.navigate('Paces')}
+      >
+        <Text style={styles.buttonSecondaryText}>View Training Paces</Text>
       </TouchableOpacity>
 
       <Text style={styles.note}>
@@ -261,6 +293,54 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 15,
     fontWeight: '700',
+  },
+  planSelector: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  planOption: {
+    flex: 1,
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    backgroundColor: '#2a2a4a',
+    alignItems: 'center',
+  },
+  planOptionActive: {
+    backgroundColor: '#5c6bc0',
+  },
+  planOptionName: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#90a4ae',
+    marginBottom: 2,
+  },
+  planOptionNameActive: {
+    color: '#ffffff',
+  },
+  planOptionSub: {
+    fontSize: 11,
+    color: '#546e7a',
+  },
+  planOptionSubActive: {
+    color: 'rgba(255,255,255,0.75)',
+  },
+  buttonSecondary: {
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 40,
+    width: '100%',
+    maxWidth: 400,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#3a3a5a',
+    alignItems: 'center',
+  },
+  buttonSecondaryText: {
+    color: '#90a4ae',
+    fontSize: 15,
+    fontWeight: '600',
+    letterSpacing: 0.5,
   },
   note: {
     fontSize: 12,

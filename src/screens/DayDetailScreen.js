@@ -1,7 +1,42 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { WORKOUT_COLORS, WORKOUT_TYPES } from '../data/plan';
+import { PACES } from '../data/paces';
 import { getDayLabel, formatFullDate } from '../utils/dateUtils';
+
+function formatPace(value) {
+  if (Array.isArray(value)) return `${value[0]} – ${value[1]} /mi`;
+  return `${value} /mi`;
+}
+
+const z = PACES.trainingZones;
+
+const PACE_FOR_TYPE = {
+  [WORKOUT_TYPES.RECOVERY]: [
+    { label: 'Pace', value: z.recovery },
+  ],
+  [WORKOUT_TYPES.GENERAL_AEROBIC]: [
+    { label: 'Pace', value: z.easy },
+  ],
+  [WORKOUT_TYPES.MEDIUM_LONG]: [
+    { label: 'Pace', value: z.steady },
+  ],
+  [WORKOUT_TYPES.LONG]: [
+    { label: 'Pace', value: z.easy },
+  ],
+  [WORKOUT_TYPES.LACTATE_THRESHOLD]: [
+    { label: 'Warm-up / cool-down', value: z.easy },
+    { label: 'Threshold segment', value: z.threshold },
+  ],
+  [WORKOUT_TYPES.VO2MAX]: [
+    { label: 'Warm-up / cool-down', value: z.easy },
+    { label: 'Intervals', value: z.interval5K },
+  ],
+  [WORKOUT_TYPES.MARATHON_PACE]: [
+    { label: 'Warm-up / cool-down', value: z.easy },
+    { label: 'Marathon-pace segment', value: z.marathon },
+  ],
+};
 
 const WORKOUT_DESCRIPTIONS = {
   [WORKOUT_TYPES.REST]: 'Full rest or light cross-training (swimming, cycling, yoga). Keep it easy — protect your legs.',
@@ -51,6 +86,24 @@ export default function DayDetailScreen({ route }) {
           <Text style={styles.sectionBody}>
             {WORKOUT_DESCRIPTIONS[day.type] || ''}
           </Text>
+        </View>
+      )}
+
+      {/* Paces */}
+      {PACE_FOR_TYPE[day.type] && (
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Paces</Text>
+          <View style={styles.paceCard}>
+            {PACE_FOR_TYPE[day.type].map(({ label, value }, i) => (
+              <View key={label}>
+                {i > 0 && <View style={styles.paceDivider} />}
+                <View style={styles.paceRow}>
+                  <Text style={styles.paceLabel}>{label}</Text>
+                  <Text style={styles.paceValue}>{formatPace(value)}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
         </View>
       )}
 
@@ -143,6 +196,33 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#b0bec5',
     lineHeight: 24,
+  },
+  paceCard: {
+    backgroundColor: '#1e1e3a',
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  paceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+  },
+  paceDivider: {
+    height: 1,
+    backgroundColor: '#2a2a4a',
+    marginHorizontal: 14,
+  },
+  paceLabel: {
+    fontSize: 14,
+    color: '#90a4ae',
+  },
+  paceValue: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#ffffff',
+    fontVariant: ['tabular-nums'],
   },
   raceBlock: {
     margin: 24,

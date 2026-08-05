@@ -1,14 +1,17 @@
 import React, { useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { PLAN } from '../data/plan';
+import { PLANS } from '../data/plans';
+import { totalMarathonPaceMiles, WORKOUT_COLORS, WORKOUT_TYPES } from '../data/plan';
 import WeekCard from '../components/WeekCard';
 import { getTodayPosition } from '../utils/dateUtils';
 
 export default function CalendarScreen({ route, navigation }) {
-  const { raceDate: raceDateISO } = route.params;
+  const { raceDate: raceDateISO, planKey = 'classic' } = route.params;
   const raceDate = new Date(raceDateISO);
+  const { plan: PLAN, name: planName } = PLANS[planKey];
 
   const todayPos = getTodayPosition(raceDate);
+  const mpMiles = totalMarathonPaceMiles(PLAN);
   const scrollRef = useRef(null);
 
   // Scroll to current week on load
@@ -29,6 +32,7 @@ export default function CalendarScreen({ route, navigation }) {
       day: JSON.stringify(day),
       date: date.toISOString(),
       raceDate: raceDateISO,
+      planKey,
     });
   };
 
@@ -40,7 +44,7 @@ export default function CalendarScreen({ route, navigation }) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Training Plan</Text>
+          <Text style={styles.headerTitle}>{planName} Plan</Text>
           <Text style={styles.headerSub}>
             Race:{' '}
             {raceDate.toLocaleDateString('en-US', {
@@ -49,6 +53,17 @@ export default function CalendarScreen({ route, navigation }) {
               year: 'numeric',
             })}
           </Text>
+          <View style={styles.mpBadge}>
+            <View
+              style={[
+                styles.mpDot,
+                { backgroundColor: WORKOUT_COLORS[WORKOUT_TYPES.MARATHON_PACE] },
+              ]}
+            />
+            <Text style={styles.mpBadgeText}>
+              {mpMiles} marathon-pace miles in this plan
+            </Text>
+          </View>
         </View>
 
         {!todayPos && (
@@ -105,6 +120,27 @@ const styles = StyleSheet.create({
   headerSub: {
     fontSize: 13,
     color: '#7986cb',
+  },
+  mpBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+    alignSelf: 'flex-start',
+    backgroundColor: '#1e1e3a',
+    borderRadius: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+  },
+  mpDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 6,
+  },
+  mpBadgeText: {
+    fontSize: 12,
+    color: '#c5cae9',
+    fontWeight: '600',
   },
   outsideBanner: {
     marginHorizontal: 16,

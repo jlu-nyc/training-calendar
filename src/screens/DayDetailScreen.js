@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { WORKOUT_COLORS, WORKOUT_TYPES } from '../data/plan';
-import { PACES } from '../data/paces';
+import { usePaces } from '../context/PacesContext';
 import { getDayLabel, formatFullDate } from '../utils/dateUtils';
 
 function formatPace(value) {
@@ -9,34 +9,35 @@ function formatPace(value) {
   return `${value} /mi`;
 }
 
-const z = PACES.trainingZones;
-
-const PACE_FOR_TYPE = {
-  [WORKOUT_TYPES.RECOVERY]: [
-    { label: 'Pace', value: z.recovery },
-  ],
-  [WORKOUT_TYPES.GENERAL_AEROBIC]: [
-    { label: 'Pace', value: z.easy },
-  ],
-  [WORKOUT_TYPES.MEDIUM_LONG]: [
-    { label: 'Pace', value: z.steady },
-  ],
-  [WORKOUT_TYPES.LONG]: [
-    { label: 'Pace', value: z.easy },
-  ],
-  [WORKOUT_TYPES.LACTATE_THRESHOLD]: [
-    { label: 'Warm-up / cool-down', value: z.easy },
-    { label: 'Threshold segment', value: z.threshold },
-  ],
-  [WORKOUT_TYPES.VO2MAX]: [
-    { label: 'Warm-up / cool-down', value: z.easy },
-    { label: 'Intervals', value: z.interval5K },
-  ],
-  [WORKOUT_TYPES.MARATHON_PACE]: [
-    { label: 'Warm-up / cool-down', value: z.easy },
-    { label: 'Marathon-pace segment', value: z.marathon },
-  ],
-};
+// Build the per-workout pace rows from the goal-derived training zones.
+function buildPaceForType(z) {
+  return {
+    [WORKOUT_TYPES.RECOVERY]: [
+      { label: 'Pace', value: z.recovery },
+    ],
+    [WORKOUT_TYPES.GENERAL_AEROBIC]: [
+      { label: 'Pace', value: z.easy },
+    ],
+    [WORKOUT_TYPES.MEDIUM_LONG]: [
+      { label: 'Pace', value: z.steady },
+    ],
+    [WORKOUT_TYPES.LONG]: [
+      { label: 'Pace', value: z.easy },
+    ],
+    [WORKOUT_TYPES.LACTATE_THRESHOLD]: [
+      { label: 'Warm-up / cool-down', value: z.easy },
+      { label: 'Threshold segment', value: z.threshold },
+    ],
+    [WORKOUT_TYPES.VO2MAX]: [
+      { label: 'Warm-up / cool-down', value: z.easy },
+      { label: 'Intervals', value: z.interval5K },
+    ],
+    [WORKOUT_TYPES.MARATHON_PACE]: [
+      { label: 'Warm-up / cool-down', value: z.easy },
+      { label: 'Marathon-pace segment', value: z.marathon },
+    ],
+  };
+}
 
 const WORKOUT_DESCRIPTIONS = {
   [WORKOUT_TYPES.REST]: 'Full rest or light cross-training (swimming, cycling, yoga). Keep it easy — protect your legs.',
@@ -54,6 +55,9 @@ export default function DayDetailScreen({ route }) {
   const { week, dayIndex, day: dayJSON, date: dateISO } = route.params;
   const day = JSON.parse(dayJSON);
   const date = new Date(dateISO);
+
+  const { paces } = usePaces();
+  const PACE_FOR_TYPE = buildPaceForType(paces.trainingZones);
 
   const isRace = day.description === 'RACE DAY';
   const color = WORKOUT_COLORS[day.type];

@@ -7,13 +7,15 @@ import HomeScreen from './src/screens/HomeScreen';
 import CalendarScreen from './src/screens/CalendarScreen';
 import DayDetailScreen from './src/screens/DayDetailScreen';
 import PacesScreen from './src/screens/PacesScreen';
+import { PacesProvider } from './src/context/PacesContext';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <StatusBar style="light" />
+    <PacesProvider>
+      <NavigationContainer>
+        <StatusBar style="light" />
       <Stack.Navigator
         initialRouteName="Home"
         screenOptions={{
@@ -45,6 +47,7 @@ export default function App() {
           options={{ title: 'Training Paces', headerBackTitle: 'Back' }}
         />
       </Stack.Navigator>
-    </NavigationContainer>
+      </NavigationContainer>
+    </PacesProvider>
   );
 }

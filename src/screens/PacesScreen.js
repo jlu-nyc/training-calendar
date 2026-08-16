@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { PACES } from '../data/paces';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { usePaces } from '../context/PacesContext';
 
 const ZONES = [
   { label: 'Recovery',     key: 'recovery',     color: '#78909c' },
@@ -13,27 +13,100 @@ const ZONES = [
   { label: 'Strides',      key: 'strides',      color: '#ab47bc' },
 ];
 
+const MIN_HOURS = 2;
+const MAX_HOURS = 6;
+
 function formatPace(value) {
   if (Array.isArray(value)) return `${value[0]} – ${value[1]}`;
   return value;
 }
 
+function Stepper({ label, value, display, onDec, onInc }) {
+  return (
+    <View style={styles.stepperRow}>
+      <Text style={styles.stepperLabel}>{label}</Text>
+      <View style={styles.stepperControls}>
+        <TouchableOpacity style={styles.stepBtn} onPress={onDec}>
+          <Text style={styles.stepBtnText}>−</Text>
+        </TouchableOpacity>
+        <Text style={styles.stepperValue}>{display}</Text>
+        <TouchableOpacity style={styles.stepBtn} onPress={onInc}>
+          <Text style={styles.stepBtnText}>+</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
 export default function PacesScreen() {
+  const { goalSeconds, setGoal, paces } = usePaces();
+
+  const [editing, setEditing] = useState(false);
+  const [draftH, setDraftH] = useState(3);
+  const [draftM, setDraftM] = useState(25);
+
+  const openEditor = () => {
+    setDraftH(Math.floor(goalSeconds / 3600));
+    setDraftM(Math.floor((goalSeconds % 3600) / 60));
+    setEditing(true);
+  };
+
+  const confirm = () => {
+    setGoal(draftH * 3600 + draftM * 60);
+    setEditing(false);
+  };
+
+  const cancel = () => setEditing(false);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.metaCard}>
         <View style={styles.metaRow}>
           <Text style={styles.metaLabel}>Goal Marathon</Text>
-          <Text style={styles.metaValue}>{PACES.goalMarathonTime}</Text>
+          {editing ? (
+            <Text style={styles.metaValue}>
+              {draftH}:{String(draftM).padStart(2, '0')}:00
+            </Text>
+          ) : (
+            <TouchableOpacity onPress={openEditor} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <Text style={styles.metaValueEditable}>{paces.goalMarathonTime}  ✎</Text>
+            </TouchableOpacity>
+          )}
         </View>
+
+        {editing && (
+          <View style={styles.editor}>
+            <Stepper
+              label="Hours"
+              display={String(draftH)}
+              onDec={() => setDraftH((h) => Math.max(MIN_HOURS, h - 1))}
+              onInc={() => setDraftH((h) => Math.min(MAX_HOURS, h + 1))}
+            />
+            <Stepper
+              label="Minutes"
+              display={String(draftM).padStart(2, '0')}
+              onDec={() => setDraftM((m) => (m === 0 ? 59 : m - 1))}
+              onInc={() => setDraftM((m) => (m === 59 ? 0 : m + 1))}
+            />
+            <View style={styles.editorActions}>
+              <TouchableOpacity style={styles.cancelBtn} onPress={cancel}>
+                <Text style={styles.cancelBtnText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.confirmBtn} onPress={confirm}>
+                <Text style={styles.confirmBtnText}>Confirm</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
         <View style={styles.divider} />
         <View style={styles.metaRow}>
-          <Text style={styles.metaLabel}>Current Marathon Pace</Text>
-          <Text style={styles.metaValue}>{PACES.currentFitness.marathonPace} /mi</Text>
+          <Text style={styles.metaLabel}>Marathon Pace</Text>
+          <Text style={styles.metaValue}>{paces.currentFitness.marathonPace} /mi</Text>
         </View>
         <View style={styles.metaRow}>
-          <Text style={styles.metaLabel}>Current Threshold Pace</Text>
-          <Text style={styles.metaValue}>{PACES.currentFitness.thresholdPace} /mi</Text>
+          <Text style={styles.metaLabel}>Threshold Pace</Text>
+          <Text style={styles.metaValue}>{paces.currentFitness.thresholdPace} /mi</Text>
         </View>
       </View>
 
@@ -50,11 +123,16 @@ export default function PacesScreen() {
               <Text style={styles.zoneText}>{label}</Text>
             </View>
             <Text style={[styles.cell, styles.paceCell, styles.paceText]}>
-              {formatPace(PACES.trainingZones[key])}
+              {formatPace(paces.trainingZones[key])}
             </Text>
           </View>
         ))}
       </View>
+
+      <Text style={styles.footnote}>
+        Paces are derived from your goal marathon time. Race-effort zones use
+        race-equivalent performances; aerobic zones are offsets from marathon pace.
+      </Text>
     </ScrollView>
   );
 }
@@ -86,6 +164,82 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     color: '#ffffff',
+  },
+  metaValueEditable: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#7986cb',
+  },
+  editor: {
+    marginTop: 12,
+    backgroundColor: '#16162e',
+    borderRadius: 10,
+    padding: 14,
+  },
+  stepperRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 6,
+  },
+  stepperLabel: {
+    fontSize: 14,
+    color: '#b0bec5',
+  },
+  stepperControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+  stepBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: '#2a2a4a',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stepBtnText: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#ffffff',
+  },
+  stepperValue: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#ffffff',
+    minWidth: 34,
+    textAlign: 'center',
+    fontVariant: ['tabular-nums'],
+  },
+  editorActions: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 12,
+  },
+  cancelBtn: {
+    flex: 1,
+    paddingVertical: 11,
+    borderRadius: 9,
+    backgroundColor: '#2a2a4a',
+    alignItems: 'center',
+  },
+  cancelBtnText: {
+    color: '#90a4ae',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  confirmBtn: {
+    flex: 1,
+    paddingVertical: 11,
+    borderRadius: 9,
+    backgroundColor: '#5c6bc0',
+    alignItems: 'center',
+  },
+  confirmBtnText: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '700',
   },
   divider: {
     height: 1,
@@ -148,5 +302,12 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: '600',
     fontVariant: ['tabular-nums'],
+  },
+  footnote: {
+    fontSize: 12,
+    color: '#546e7a',
+    lineHeight: 18,
+    marginTop: 16,
+    paddingHorizontal: 4,
   },
 });

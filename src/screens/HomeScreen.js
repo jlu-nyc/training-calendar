@@ -10,6 +10,7 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PLANS } from '../data/plans';
+import TodayCard from '../components/TodayCard';
 
 // Key for the persisted race date (stored as a yyyy-mm-dd string)
 const RACE_DATE_KEY = 'raceDate';
@@ -95,6 +96,8 @@ export default function HomeScreen({ navigation }) {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Marathon{'\n'}Training Calendar</Text>
       <Text style={styles.subtitle}>Pfitzinger · 70 mpw · 12 weeks</Text>
+
+      <TodayCard raceDate={raceDate} planKey={planKey} navigation={navigation} />
 
       <View style={styles.card}>
         <Text style={styles.cardLabel}>Race Date</Text>

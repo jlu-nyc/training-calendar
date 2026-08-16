@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,11 @@ import {
   ScrollView,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PLANS } from '../data/plans';
+
+// Key for the persisted race date (stored as a yyyy-mm-dd string)
+const RACE_DATE_KEY = 'raceDate';
 
 const DEFAULT_RACE = (() => {
   const d = new Date();
@@ -47,6 +51,28 @@ export default function HomeScreen({ navigation }) {
   const [showPicker, setShowPicker] = useState(false);
   const [planKey, setPlanKey] = useState('classic');
 
+  // On launch, restore the last race date the user chose (if any).
+  useEffect(() => {
+    let active = true;
+    AsyncStorage.getItem(RACE_DATE_KEY)
+      .then((saved) => {
+        if (active && saved) {
+          const restored = fromInputValue(saved);
+          setRaceDate(restored);
+          setTempDate(restored);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Persist the chosen date so it becomes the default next time.
+  const persistRaceDate = (date) => {
+    AsyncStorage.setItem(RACE_DATE_KEY, toInputValue(date)).catch(() => {});
+  };
+
   const planStart = new Date(raceDate);
   planStart.setDate(planStart.getDate() - 83);
 
@@ -57,6 +83,7 @@ export default function HomeScreen({ navigation }) {
 
   const confirmDate = () => {
     setRaceDate(tempDate);
+    persistRaceDate(tempDate);
     setShowPicker(false);
   };
 
@@ -79,7 +106,11 @@ export default function HomeScreen({ navigation }) {
             value={toInputValue(raceDate)}
             min={toInputValue(new Date())}
             onChange={(e) => {
-              if (e.target.value) setRaceDate(fromInputValue(e.target.value));
+              if (e.target.value) {
+                const picked = fromInputValue(e.target.value);
+                setRaceDate(picked);
+                persistRaceDate(picked);
+              }
             }}
             style={webInputStyle}
           />

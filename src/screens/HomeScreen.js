@@ -8,13 +8,9 @@ import {
   ScrollView,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PLANS } from '../data/plans';
+import { storage } from '../data/storage';
 import TodayCard from '../components/TodayCard';
-
-// Keys for persisted settings
-const RACE_DATE_KEY = 'raceDate';
-const PLAN_KEY = 'planKey';
 
 const DEFAULT_RACE = (() => {
   const d = new Date();
@@ -56,20 +52,16 @@ export default function HomeScreen({ navigation }) {
   // On launch, restore the last race date and plan the user chose (if any).
   useEffect(() => {
     let active = true;
-    AsyncStorage.getItem(RACE_DATE_KEY)
-      .then((saved) => {
-        if (active && saved) {
-          const restored = fromInputValue(saved);
-          setRaceDate(restored);
-          setTempDate(restored);
-        }
-      })
-      .catch(() => {});
-    AsyncStorage.getItem(PLAN_KEY)
-      .then((saved) => {
-        if (active && saved && PLANS[saved]) setPlanKey(saved);
-      })
-      .catch(() => {});
+    storage.getRaceDate().then((saved) => {
+      if (active && saved) {
+        const restored = fromInputValue(saved);
+        setRaceDate(restored);
+        setTempDate(restored);
+      }
+    });
+    storage.getPlanKey().then((saved) => {
+      if (active && saved && PLANS[saved]) setPlanKey(saved);
+    });
     return () => {
       active = false;
     };
@@ -77,13 +69,13 @@ export default function HomeScreen({ navigation }) {
 
   // Persist the chosen date so it becomes the default next time.
   const persistRaceDate = (date) => {
-    AsyncStorage.setItem(RACE_DATE_KEY, toInputValue(date)).catch(() => {});
+    storage.setRaceDate(toInputValue(date));
   };
 
   // Persist the chosen plan so both the Today card and calendar default to it.
   const selectPlan = (key) => {
     setPlanKey(key);
-    AsyncStorage.setItem(PLAN_KEY, key).catch(() => {});
+    storage.setPlanKey(key);
   };
 
   const planStart = new Date(raceDate);

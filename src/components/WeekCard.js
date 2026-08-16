@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import DayRow from './DayRow';
 import { getWeekStartDate, getDayDate, formatDate } from '../utils/dateUtils';
+import { useSchedule } from '../context/ScheduleContext';
 
-export default function WeekCard({ weekData, raceDate, isCurrentWeek, onDayPress }) {
+export default function WeekCard({ weekData, raceDate, planKey, isCurrentWeek, onDayPress }) {
   const [expanded, setExpanded] = useState(isCurrentWeek);
+  const { getWeekOrder } = useSchedule();
+  const order = getWeekOrder(planKey, weekData.week);
 
   const weekStart = getWeekStartDate(raceDate, weekData.week);
   const weekEnd = getDayDate(raceDate, weekData.week, 6);
@@ -48,15 +51,19 @@ export default function WeekCard({ weekData, raceDate, isCurrentWeek, onDayPress
 
       {expanded && (
         <View style={styles.days}>
-          {weekData.days.map((day, i) => (
-            <DayRow
-              key={i}
-              dayIndex={i}
-              day={day}
-              date={getDayDate(raceDate, weekData.week, i)}
-              onPress={() => onDayPress(weekData.week, i, day, getDayDate(raceDate, weekData.week, i))}
-            />
-          ))}
+          {order.map((origIdx, slot) => {
+            const day = weekData.days[origIdx];
+            const date = getDayDate(raceDate, weekData.week, slot);
+            return (
+              <DayRow
+                key={slot}
+                dayIndex={slot}
+                day={day}
+                date={date}
+                onPress={() => onDayPress(weekData.week, slot, day, date)}
+              />
+            );
+          })}
         </View>
       )}
     </View>

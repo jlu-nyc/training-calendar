@@ -1,11 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { storage } from '../data/storage';
 import { derivePaces, DEFAULT_GOAL_SECONDS } from '../data/paces';
 
 // Single source of truth for the goal marathon time and the paces derived from
-// it. The goal persists across sessions (AsyncStorage -> localStorage on web).
-const GOAL_KEY = 'goalMarathonSeconds';
-
+// it. The goal persists across sessions via the shared storage module.
 const PacesContext = createContext(null);
 
 export function PacesProvider({ children }) {
@@ -13,12 +11,9 @@ export function PacesProvider({ children }) {
 
   useEffect(() => {
     let active = true;
-    AsyncStorage.getItem(GOAL_KEY)
-      .then((saved) => {
-        const n = parseInt(saved, 10);
-        if (active && !Number.isNaN(n)) setGoalSeconds(n);
-      })
-      .catch(() => {});
+    storage.getGoalSeconds().then((n) => {
+      if (active && n != null) setGoalSeconds(n);
+    });
     return () => {
       active = false;
     };
@@ -26,7 +21,7 @@ export function PacesProvider({ children }) {
 
   const setGoal = (seconds) => {
     setGoalSeconds(seconds);
-    AsyncStorage.setItem(GOAL_KEY, String(seconds)).catch(() => {});
+    storage.setGoalSeconds(seconds);
   };
 
   const value = {

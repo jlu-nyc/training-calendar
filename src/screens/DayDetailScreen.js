@@ -1,7 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { WORKOUT_COLORS, WORKOUT_TYPES } from '../data/plan';
+import { PLANS } from '../data/plans';
 import { usePaces } from '../context/PacesContext';
+import { useSchedule } from '../context/ScheduleContext';
 import { getDayLabel, formatFullDate } from '../utils/dateUtils';
 
 function formatPace(value) {
@@ -51,16 +53,36 @@ const WORKOUT_DESCRIPTIONS = {
   [WORKOUT_TYPES.TUNE_UP]: 'Race at shorter distance (e.g. 15K, half marathon) to assess fitness and practice race-day execution.',
 };
 
-export default function DayDetailScreen({ route }) {
-  const { week, dayIndex, day: dayJSON, date: dateISO } = route.params;
+export default function DayDetailScreen({ route, navigation }) {
+  const {
+    week,
+    dayIndex,
+    day: dayJSON,
+    date: dateISO,
+    planKey = 'classic',
+  } = route.params;
   const day = JSON.parse(dayJSON);
   const date = new Date(dateISO);
 
   const { paces } = usePaces();
+  const { getWeekOrder, hasOverride, swapDays, resetWeek } = useSchedule();
   const PACE_FOR_TYPE = buildPaceForType(paces.trainingZones);
 
   const isRace = day.description === 'RACE DAY';
   const color = WORKOUT_COLORS[day.type];
+
+  // Reschedule (swap this workout onto another day in the same week).
+  const [swapping, setSwapping] = useState(false);
+  const [target, setTarget] = useState(null);
+  const weekDays = PLANS[planKey].plan[week - 1].days;
+  const order = getWeekOrder(planKey, week);
+
+  const confirmSwap = () => {
+    if (target === null) return;
+    swapDays(planKey, week, dayIndex, target);
+    setSwapping(false);
+    navigation.goBack();
+  };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -116,6 +138,71 @@ export default function DayDetailScreen({ route }) {
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>Notes</Text>
           <Text style={styles.sectionBody}>{day.description}</Text>
+        </View>
+      )}
+
+      {/* Reschedule — swap this workout onto another day this week */}
+      {!isRace && (
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Reschedule</Text>
+
+          {!swapping ? (
+            <>
+              <TouchableOpacity
+                style={styles.rescheduleBtn}
+                onPress={() => {
+                  setTarget(null);
+                  setSwapping(true);
+                }}
+              >
+                <Text style={styles.rescheduleBtnText}>Swap with another day</Text>
+              </TouchableOpacity>
+              {hasOverride(planKey, week) && (
+                <TouchableOpacity
+                  style={styles.resetBtn}
+                  onPress={() => resetWeek(planKey, week)}
+                >
+                  <Text style={styles.resetBtnText}>Reset week to plan order</Text>
+                </TouchableOpacity>
+              )}
+            </>
+          ) : (
+            <View>
+              <Text style={styles.swapHint}>
+                Swap {getDayLabel(dayIndex)}'s workout with:
+              </Text>
+              {order.map((origIdx, slot) => {
+                if (slot === dayIndex) return null;
+                const d = weekDays[origIdx];
+                const selected = target === slot;
+                return (
+                  <TouchableOpacity
+                    key={slot}
+                    style={[styles.swapOption, selected && styles.swapOptionSel]}
+                    onPress={() => setTarget(slot)}
+                  >
+                    <Text style={styles.swapOptionDay}>{getDayLabel(slot)}</Text>
+                    <Text style={styles.swapOptionWorkout}>
+                      {d.type}
+                      {d.miles > 0 ? ` · ${d.miles} mi` : ''}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+              <View style={styles.swapActions}>
+                <TouchableOpacity style={styles.cancelBtn} onPress={() => setSwapping(false)}>
+                  <Text style={styles.cancelBtnText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.confirmBtn, target === null && styles.confirmBtnDisabled]}
+                  disabled={target === null}
+                  onPress={confirmSwap}
+                >
+                  <Text style={styles.confirmBtnText}>Confirm swap</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
         </View>
       )}
 
@@ -227,6 +314,91 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#ffffff',
     fontVariant: ['tabular-nums'],
+  },
+  rescheduleBtn: {
+    backgroundColor: '#1e1e3a',
+    borderRadius: 10,
+    paddingVertical: 14,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#2a2a4a',
+  },
+  rescheduleBtnText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#7986cb',
+  },
+  resetBtn: {
+    marginTop: 10,
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  resetBtnText: {
+    fontSize: 13,
+    color: '#78909c',
+    fontWeight: '600',
+  },
+  swapHint: {
+    fontSize: 13,
+    color: '#90a4ae',
+    marginBottom: 10,
+  },
+  swapOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#1e1e3a',
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#2a2a4a',
+  },
+  swapOptionSel: {
+    borderColor: '#5c6bc0',
+    backgroundColor: '#26264a',
+  },
+  swapOptionDay: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#ffffff',
+  },
+  swapOptionWorkout: {
+    fontSize: 13,
+    color: '#90a4ae',
+  },
+  swapActions: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 8,
+  },
+  cancelBtn: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 9,
+    backgroundColor: '#2a2a4a',
+    alignItems: 'center',
+  },
+  cancelBtnText: {
+    color: '#90a4ae',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  confirmBtn: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 9,
+    backgroundColor: '#5c6bc0',
+    alignItems: 'center',
+  },
+  confirmBtnDisabled: {
+    opacity: 0.4,
+  },
+  confirmBtnText: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '700',
   },
   raceBlock: {
     margin: 24,

@@ -8,12 +8,14 @@ import CalendarScreen from './src/screens/CalendarScreen';
 import DayDetailScreen from './src/screens/DayDetailScreen';
 import PacesScreen from './src/screens/PacesScreen';
 import { PacesProvider } from './src/context/PacesContext';
+import { ScheduleProvider } from './src/context/ScheduleContext';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <PacesProvider>
+      <ScheduleProvider>
       <NavigationContainer>
         <StatusBar style="light" />
       <Stack.Navigator
@@ -48,6 +50,7 @@ export default function App() {
         />
       </Stack.Navigator>
       </NavigationContainer>
+      </ScheduleProvider>
     </PacesProvider>
   );
 }

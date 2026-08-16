@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { PLANS } from '../data/plans';
 import { WORKOUT_COLORS } from '../data/plan';
+import { useSchedule } from '../context/ScheduleContext';
 import {
   getTodayPosition,
   getDayDate,
@@ -14,6 +15,7 @@ import {
 // selected plan and race date. Tapping opens the full workout detail.
 export default function TodayCard({ raceDate, planKey, navigation }) {
   const PLAN = PLANS[planKey].plan;
+  const { getWeekOrder } = useSchedule();
   const pos = getTodayPosition(raceDate);
 
   // Today falls outside the 12-week window — show a short status instead.
@@ -42,7 +44,9 @@ export default function TodayCard({ raceDate, planKey, navigation }) {
   }
 
   const { week, dayIndex } = pos;
-  const day = PLAN[week - 1].days[dayIndex];
+  // dayIndex is the calendar slot; map it through any swap to the actual workout.
+  const order = getWeekOrder(planKey, week);
+  const day = PLAN[week - 1].days[order[dayIndex]];
   const date = getDayDate(raceDate, week, dayIndex);
   const color = WORKOUT_COLORS[day.type];
   const isRace = day.description === 'RACE DAY';

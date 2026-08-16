@@ -79,6 +79,7 @@ export default function CalendarScreen({ route, navigation }) {
             key={week.week}
             weekData={week}
             raceDate={raceDate}
+            planKey={planKey}
             isCurrentWeek={todayPos?.week === week.week}
             onDayPress={handleDayPress}
           />

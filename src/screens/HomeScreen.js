@@ -182,6 +182,12 @@ export default function HomeScreen({ navigation }) {
             );
           })}
         </View>
+        <TouchableOpacity
+          style={styles.compareLink}
+          onPress={() => navigation.navigate('Compare', { planKey })}
+        >
+          <Text style={styles.compareLinkText}>Compare plans →</Text>
+        </TouchableOpacity>
       </View>
 
       <TouchableOpacity
@@ -374,6 +380,16 @@ const styles = StyleSheet.create({
   },
   planOptionSubActive: {
     color: 'rgba(255,255,255,0.75)',
+  },
+  compareLink: {
+    marginTop: 14,
+    alignSelf: 'center',
+    paddingVertical: 4,
+  },
+  compareLinkText: {
+    fontSize: 13,
+    color: '#7986cb',
+    fontWeight: '600',
   },
   buttonSecondary: {
     borderRadius: 12,

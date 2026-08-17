@@ -7,6 +7,7 @@ import HomeScreen from './src/screens/HomeScreen';
 import CalendarScreen from './src/screens/CalendarScreen';
 import DayDetailScreen from './src/screens/DayDetailScreen';
 import PacesScreen from './src/screens/PacesScreen';
+import ComparePlansScreen from './src/screens/ComparePlansScreen';
 import { PacesProvider } from './src/context/PacesContext';
 import { ScheduleProvider } from './src/context/ScheduleContext';
 
@@ -47,6 +48,11 @@ export default function App() {
           name="Paces"
           component={PacesScreen}
           options={{ title: 'Training Paces', headerBackTitle: 'Back' }}
+        />
+        <Stack.Screen
+          name="Compare"
+          component={ComparePlansScreen}
+          options={{ title: 'Compare Plans', headerBackTitle: 'Back' }}
         />
       </Stack.Navigator>
       </NavigationContainer>

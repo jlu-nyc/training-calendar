@@ -56,6 +56,42 @@ export function totalMarathonPaceMiles(plan) {
   );
 }
 
+// Summary stats for a plan, all from structured fields (no description parsing).
+// Used by the plan comparison screen.
+export function planStats(plan) {
+  let totalMiles = 0;
+  let longestRun = 0;
+  const peakWeek = { week: 0, miles: 0 };
+  const counts = { threshold: 0, vo2max: 0, marathonPace: 0, tuneUp: 0 };
+
+  plan.forEach((week) => {
+    let weekMiles = 0;
+    week.days.forEach((day) => {
+      const m = day.miles || 0;
+      totalMiles += m;
+      weekMiles += m;
+      // Longest single run, excluding the marathon itself (a tune-up entry).
+      if (day.type !== WORKOUT_TYPES.TUNE_UP && m > longestRun) longestRun = m;
+      if (day.type === WORKOUT_TYPES.LACTATE_THRESHOLD) counts.threshold += 1;
+      else if (day.type === WORKOUT_TYPES.VO2MAX) counts.vo2max += 1;
+      else if (day.type === WORKOUT_TYPES.MARATHON_PACE) counts.marathonPace += 1;
+      else if (day.type === WORKOUT_TYPES.TUNE_UP && m === 0) counts.tuneUp += 1;
+    });
+    if (weekMiles > peakWeek.miles) {
+      peakWeek.week = week.week;
+      peakWeek.miles = weekMiles;
+    }
+  });
+
+  return {
+    totalMiles: Math.round(totalMiles),
+    peakWeek,
+    longestRun,
+    mpMiles: totalMarathonPaceMiles(plan),
+    counts,
+  };
+}
+
 const R = WORKOUT_TYPES.REST;
 const REC = WORKOUT_TYPES.RECOVERY;
 const GA = WORKOUT_TYPES.GENERAL_AEROBIC;

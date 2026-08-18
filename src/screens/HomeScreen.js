@@ -98,13 +98,11 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>NYCM 15+{'\n'}Training Calendar</Text>
+      <Text style={styles.title}>RACE DAY</Text>
       <Text style={styles.subtitle}>59 - 71ish mpw · 12 weeks</Text>
 
-      <TodayCard raceDate={raceDate} planKey={planKey} navigation={navigation} />
-
       <View style={styles.card}>
-        <Text style={styles.cardLabel}>Race Date</Text>
+        <Text style={styles.cardLabel}>Race Day</Text>
 
         {Platform.OS === 'web' ? (
           // Native HTML date input — works reliably across all browsers
@@ -160,6 +158,8 @@ export default function HomeScreen({ navigation }) {
         <Text style={styles.infoLabel}>Training begins</Text>
         <Text style={styles.infoValue}>{toLocalDateString(planStart)}</Text>
       </View>
+
+            <TodayCard raceDate={raceDate} planKey={planKey} navigation={navigation} />
 
       <View style={styles.card}>
         <Text style={styles.cardLabel}>Plan</Text>

@@ -1,6 +1,4 @@
-// Pfitzinger 70 miles/week - 12-week marathon plan
-// Source: Advanced Marathoning by Pete Pfitzinger & Scott Douglas
-// Fill in miles and descriptions from your copy of the book.
+// 12-week marathon plan
 
 export const WORKOUT_TYPES = {
   REST: 'Rest',

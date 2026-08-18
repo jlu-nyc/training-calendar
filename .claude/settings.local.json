@@ -8,7 +8,11 @@
       "Bash(git commit:*)",
       "Bash(gh repo:*)",
       "Bash(bc)",
-      "Bash(npx expo *)"
+      "Bash(npx expo *)",
+      "Bash(python3 -m http.server 4599)",
+      "Bash(echo \"server pid $!\")",
+      "Bash(curl -sS -o /dev/null -w \"local server HTTP %{http_code}\\\\n\" http://localhost:4599/)",
+      "Bash(git push *)"
     ]
   }
 }

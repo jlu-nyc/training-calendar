@@ -1,4 +1,4 @@
-// Threshold variant — the classic Pfitzinger 70 mpw skeleton (the 15ish-mile
+// Threshold variant — 70 mpw skeleton (the 15ish-mile
 // midweek medium-long runs, long runs, MP weeks, tune-up races), with the
 // quality emphasis shifted to lactate-threshold work. LT progression runs in
 // weeks 2, 4, 6, 7, 8, 9, 10, and 11 (taper). No full rest day — Mondays are a short

@@ -98,8 +98,8 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Marathon{'\n'}Training Calendar</Text>
-      <Text style={styles.subtitle}>Pfitzinger · 70 mpw · 12 weeks</Text>
+      <Text style={styles.title}>NYCM 15+{'\n'}Training Calendar</Text>
+      <Text style={styles.subtitle}>59 - 71ish mpw · 12 weeks</Text>
 
       <TodayCard raceDate={raceDate} planKey={planKey} navigation={navigation} />
 

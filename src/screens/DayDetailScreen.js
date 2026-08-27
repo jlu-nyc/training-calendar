@@ -38,6 +38,10 @@ function buildPaceForType(z) {
       { label: 'Warm-up / cool-down', value: z.easy },
       { label: 'Marathon-pace segment', value: z.marathon },
     ],
+    [WORKOUT_TYPES.HALF_MARATHON_PACE]: [
+      { label: 'Warm-up / cool-down', value: z.easy },
+      { label: 'Half-marathon-pace segment', value: z.halfMarathon },
+    ],
   };
 }
 
@@ -50,6 +54,7 @@ const WORKOUT_DESCRIPTIONS = {
   [WORKOUT_TYPES.LACTATE_THRESHOLD]: 'Includes warm-up, a tempo segment at lactate threshold pace (comfortably hard — about 10K to half-marathon race pace), and cool-down.',
   [WORKOUT_TYPES.VO2MAX]: 'Interval session targeting VO2max. Typically 600m–1200m repeats at 5K effort with recovery jogs. Includes warm-up and cool-down.',
   [WORKOUT_TYPES.MARATHON_PACE]: 'Includes easy warm-up miles, a sustained segment at goal marathon pace, and easy cool-down miles. Builds race-pace economy and mental familiarity.',
+  [WORKOUT_TYPES.HALF_MARATHON_PACE]: 'Includes easy warm-up miles, a sustained segment at goal half-marathon pace, and easy cool-down miles. Builds race-pace economy and mental familiarity.',
   [WORKOUT_TYPES.TUNE_UP]: 'Race at shorter distance (e.g. 15K, half marathon) to assess fitness and practice race-day execution.',
 };
 
@@ -70,6 +75,7 @@ export default function DayDetailScreen({ route, navigation }) {
 
   const isRace = day.description === 'RACE DAY';
   const color = WORKOUT_COLORS[day.type];
+  const totalWeeks = PLANS[planKey].plan.length;
 
   // Reschedule (swap this workout onto another day in the same week).
   const [swapping, setSwapping] = useState(false);
@@ -209,7 +215,7 @@ export default function DayDetailScreen({ route, navigation }) {
       {isRace && (
         <View style={styles.raceBlock}>
           <Text style={styles.raceText}>
-            All 12 weeks of training have been building to this moment.{'\n\n'}
+            All {totalWeeks} weeks of training have been building to this moment.{'\n\n'}
             Trust your preparation. Run your race.
           </Text>
         </View>

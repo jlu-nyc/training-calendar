@@ -52,6 +52,7 @@ export function derivePaces(goalSeconds) {
       easy: [pace(mp + 60), pace(mp + 110)],
       steady: [pace(mp + 25), pace(mp + 45)],
       marathon: pace(mp),
+      halfMarathon: pace(pHalf),
       threshold: [pace(p15), pace(pHalf)],
       interval10K: [pace(p10 - 5), pace(p10 + 5)],
       interval5K: [pace(p5 - 5), pace(p5 + 5)],

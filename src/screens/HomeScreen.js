@@ -184,7 +184,7 @@ export default function HomeScreen({ navigation }) {
         style={styles.button}
         onPress={() => navigation.navigate('Calendar', { raceDate: raceDate.toISOString(), planKey })}
       >
-        <Text style={styles.buttonText}>View Training Plan</Text>
+        <Text style={styles.buttonText}>View Calendar</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -328,10 +328,12 @@ const styles = StyleSheet.create({
   },
   planSelector: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 10,
   },
   planOption: {
-    flex: 1,
+    flexGrow: 1,
+    flexBasis: '46%',
     borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 14,

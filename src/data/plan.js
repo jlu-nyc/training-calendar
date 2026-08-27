@@ -9,6 +9,7 @@ export const WORKOUT_TYPES = {
   LACTATE_THRESHOLD: 'Lactate threshold',
   VO2MAX: 'VO2max intervals',
   MARATHON_PACE: 'Marathon-pace run',
+  HALF_MARATHON_PACE: 'Half-marathon pace',
   TUNE_UP: 'Tune-up race',
 };
 
@@ -22,6 +23,7 @@ export const WORKOUT_COLORS = {
   [WORKOUT_TYPES.LACTATE_THRESHOLD]: '#FFA726',
   [WORKOUT_TYPES.VO2MAX]: '#EF5350',
   [WORKOUT_TYPES.MARATHON_PACE]: '#F06292',
+  [WORKOUT_TYPES.HALF_MARATHON_PACE]: '#26C6DA',
   [WORKOUT_TYPES.TUNE_UP]: '#AB47BC',
 };
 
@@ -34,24 +36,39 @@ export const WORKOUT_TEXT_COLORS = {
   [WORKOUT_TYPES.LACTATE_THRESHOLD]: '#fff',
   [WORKOUT_TYPES.VO2MAX]: '#fff',
   [WORKOUT_TYPES.MARATHON_PACE]: '#fff',
+  [WORKOUT_TYPES.HALF_MARATHON_PACE]: '#fff',
   [WORKOUT_TYPES.TUNE_UP]: '#fff',
 };
 
-// Miles actually run at marathon pace on a given day. Marathon-pace runs bury
-// the MP segment inside a longer run, so each MP day carries an explicit
-// `mpMiles` field for the portion run at marathon pace.
-export function marathonPaceMiles(day) {
-  if (!day || day.type !== WORKOUT_TYPES.MARATHON_PACE) return 0;
+// Race-pace types: a plan uses one or the other depending on its target
+// distance, so stats/badges need to recognize both.
+const RACE_PACE_TYPES = [WORKOUT_TYPES.MARATHON_PACE, WORKOUT_TYPES.HALF_MARATHON_PACE];
+
+// Miles actually run at race pace on a given day. Race-pace runs bury that
+// segment inside a longer run, so each one carries an explicit `mpMiles`
+// field for the portion run at race pace.
+export function racePaceMiles(day) {
+  if (!day || !RACE_PACE_TYPES.includes(day.type)) return 0;
   return day.mpMiles || 0;
 }
 
-// Total marathon-pace miles across an entire plan.
-export function totalMarathonPaceMiles(plan) {
+// Total race-pace miles across an entire plan.
+export function totalRacePaceMiles(plan) {
   return plan.reduce(
     (sum, week) =>
-      sum + week.days.reduce((wSum, day) => wSum + marathonPaceMiles(day), 0),
+      sum + week.days.reduce((wSum, day) => wSum + racePaceMiles(day), 0),
     0
   );
+}
+
+// Which race-pace type a plan actually uses (for coloring badges) — falls
+// back to marathon pace if the plan has no race-pace days at all.
+export function planRacePaceType(plan) {
+  for (const week of plan) {
+    const day = week.days.find((d) => RACE_PACE_TYPES.includes(d.type));
+    if (day) return day.type;
+  }
+  return WORKOUT_TYPES.MARATHON_PACE;
 }
 
 // Summary stats for a plan, all from structured fields (no description parsing).
@@ -60,7 +77,7 @@ export function planStats(plan) {
   let totalMiles = 0;
   let longestRun = 0;
   const peakWeek = { week: 0, miles: 0 };
-  const counts = { threshold: 0, vo2max: 0, marathonPace: 0, tuneUp: 0 };
+  const counts = { threshold: 0, vo2max: 0, racePace: 0, tuneUp: 0 };
 
   plan.forEach((week) => {
     let weekMiles = 0;
@@ -68,11 +85,11 @@ export function planStats(plan) {
       const m = day.miles || 0;
       totalMiles += m;
       weekMiles += m;
-      // Longest single run, excluding the marathon itself (a tune-up entry).
+      // Longest single run, excluding the race itself (a tune-up entry).
       if (day.type !== WORKOUT_TYPES.TUNE_UP && m > longestRun) longestRun = m;
       if (day.type === WORKOUT_TYPES.LACTATE_THRESHOLD) counts.threshold += 1;
       else if (day.type === WORKOUT_TYPES.VO2MAX) counts.vo2max += 1;
-      else if (day.type === WORKOUT_TYPES.MARATHON_PACE) counts.marathonPace += 1;
+      else if (day.type === WORKOUT_TYPES.MARATHON_PACE || day.type === WORKOUT_TYPES.HALF_MARATHON_PACE) counts.racePace += 1;
       else if (day.type === WORKOUT_TYPES.TUNE_UP && m === 0) counts.tuneUp += 1;
     });
     if (weekMiles > peakWeek.miles) {
@@ -86,7 +103,7 @@ export function planStats(plan) {
     totalMiles: Math.round(totalMiles),
     peakWeek,
     longestRun,
-    mpMiles: totalMarathonPaceMiles(plan),
+    racePaceMiles: totalRacePaceMiles(plan),
     counts,
   };
 }

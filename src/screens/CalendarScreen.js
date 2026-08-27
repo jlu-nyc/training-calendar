@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { PLANS } from '../data/plans';
-import { totalMarathonPaceMiles, WORKOUT_COLORS, WORKOUT_TYPES } from '../data/plan';
+import { totalRacePaceMiles, planRacePaceType, WORKOUT_COLORS } from '../data/plan';
 import WeekCard from '../components/WeekCard';
 import { getTodayPosition } from '../utils/dateUtils';
 
@@ -9,9 +9,11 @@ export default function CalendarScreen({ route, navigation }) {
   const { raceDate: raceDateISO, planKey = 'classic' } = route.params;
   const raceDate = new Date(raceDateISO);
   const { plan: PLAN, name: planName } = PLANS[planKey];
+  const totalWeeks = PLAN.length;
 
-  const todayPos = getTodayPosition(raceDate);
-  const mpMiles = totalMarathonPaceMiles(PLAN);
+  const todayPos = getTodayPosition(raceDate, totalWeeks);
+  const racePaceMiles = totalRacePaceMiles(PLAN);
+  const racePaceType = planRacePaceType(PLAN);
   const scrollRef = useRef(null);
 
   // Scroll to current week on load
@@ -53,17 +55,19 @@ export default function CalendarScreen({ route, navigation }) {
               year: 'numeric',
             })}
           </Text>
-          <View style={styles.mpBadge}>
-            <View
-              style={[
-                styles.mpDot,
-                { backgroundColor: WORKOUT_COLORS[WORKOUT_TYPES.MARATHON_PACE] },
-              ]}
-            />
-            <Text style={styles.mpBadgeText}>
-              {mpMiles} marathon-pace miles in this plan
-            </Text>
-          </View>
+          {racePaceMiles > 0 && (
+            <View style={styles.mpBadge}>
+              <View
+                style={[
+                  styles.mpDot,
+                  { backgroundColor: WORKOUT_COLORS[racePaceType] },
+                ]}
+              />
+              <Text style={styles.mpBadgeText}>
+                {racePaceMiles} race-pace miles in this plan
+              </Text>
+            </View>
+          )}
         </View>
 
         {!todayPos && (
@@ -80,6 +84,7 @@ export default function CalendarScreen({ route, navigation }) {
             weekData={week}
             raceDate={raceDate}
             planKey={planKey}
+            totalWeeks={totalWeeks}
             isCurrentWeek={todayPos?.week === week.week}
             onDayPress={handleDayPress}
           />

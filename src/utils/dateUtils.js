@@ -3,19 +3,19 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 /**
- * The plan assumes week 12 ends on race day (Sunday).
- * Week 12 Monday = raceDate - 6 days
- * Week N Monday  = raceDate - 6 - (12 - N) * 7 days
+ * The plan's last week ends on race day (Sunday).
+ * Last week's Monday = raceDate - 6 days
+ * Week N Monday      = raceDate - 6 - (totalWeeks - N) * 7 days
  */
-export function getWeekStartDate(raceDate, weekNumber) {
-  const daysBack = 6 + (12 - weekNumber) * 7;
+export function getWeekStartDate(raceDate, weekNumber, totalWeeks = 12) {
+  const daysBack = 6 + (totalWeeks - weekNumber) * 7;
   const d = new Date(raceDate);
   d.setDate(d.getDate() - daysBack);
   return d;
 }
 
-export function getDayDate(raceDate, weekNumber, dayIndex) {
-  const weekStart = getWeekStartDate(raceDate, weekNumber);
+export function getDayDate(raceDate, weekNumber, dayIndex, totalWeeks = 12) {
+  const weekStart = getWeekStartDate(raceDate, weekNumber, totalWeeks);
   const d = new Date(weekStart);
   d.setDate(d.getDate() + dayIndex);
   return d;
@@ -54,11 +54,11 @@ export function getDayAbbrev(index) {
 
 // Find which week + day "today" falls on, given a race date.
 // Returns { week, dayIndex } or null if today is outside the plan.
-export function getTodayPosition(raceDate) {
+export function getTodayPosition(raceDate, totalWeeks = 12) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const planStart = getWeekStartDate(raceDate, 1);
+  const planStart = getWeekStartDate(raceDate, 1, totalWeeks);
   planStart.setHours(0, 0, 0, 0);
 
   const planEnd = new Date(raceDate);

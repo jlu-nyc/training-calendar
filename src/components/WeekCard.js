@@ -4,16 +4,16 @@ import DayRow from './DayRow';
 import { getWeekStartDate, getDayDate, formatDate } from '../utils/dateUtils';
 import { useSchedule } from '../context/ScheduleContext';
 
-export default function WeekCard({ weekData, raceDate, planKey, isCurrentWeek, onDayPress }) {
+export default function WeekCard({ weekData, raceDate, planKey, totalWeeks, isCurrentWeek, onDayPress }) {
   const [expanded, setExpanded] = useState(isCurrentWeek);
   const { getWeekOrder } = useSchedule();
   const order = getWeekOrder(planKey, weekData.week);
 
-  const weekStart = getWeekStartDate(raceDate, weekData.week);
-  const weekEnd = getDayDate(raceDate, weekData.week, 6);
+  const weekStart = getWeekStartDate(raceDate, weekData.week, totalWeeks);
+  const weekEnd = getDayDate(raceDate, weekData.week, 6, totalWeeks);
 
   const totalMiles = weekData.days.reduce((sum, d) => sum + (d.miles || 0), 0);
-  const isRaceWeek = weekData.week === 12;
+  const isRaceWeek = weekData.week === totalWeeks;
 
   return (
     <View style={[styles.card, isCurrentWeek && styles.cardCurrent]}>
@@ -25,7 +25,7 @@ export default function WeekCard({ weekData, raceDate, planKey, isCurrentWeek, o
         <View>
           <View style={styles.headerTop}>
             <Text style={styles.weekLabel}>
-              {isRaceWeek ? 'Week 12 · Race Week' : `Week ${weekData.week}`}
+              {isRaceWeek ? `Week ${weekData.week} · Race Week` : `Week ${weekData.week}`}
             </Text>
             {isCurrentWeek && (
               <View style={styles.currentBadge}>
@@ -53,7 +53,7 @@ export default function WeekCard({ weekData, raceDate, planKey, isCurrentWeek, o
         <View style={styles.days}>
           {order.map((origIdx, slot) => {
             const day = weekData.days[origIdx];
-            const date = getDayDate(raceDate, weekData.week, slot);
+            const date = getDayDate(raceDate, weekData.week, slot, totalWeeks);
             return (
               <DayRow
                 key={slot}

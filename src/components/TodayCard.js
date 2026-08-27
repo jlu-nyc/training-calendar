@@ -16,14 +16,15 @@ import {
 // selected plan and race date. Tapping opens the full workout detail.
 export default function TodayCard({ raceDate, planKey, navigation }) {
   const PLAN = PLANS[planKey].plan;
+  const totalWeeks = PLAN.length;
   const { getWeekOrder } = useSchedule();
-  const pos = getTodayPosition(raceDate);
+  const pos = getTodayPosition(raceDate, totalWeeks);
 
-  // Today falls outside the 12-week window — show a short status instead.
+  // Today falls outside the plan's window — show a short status instead.
   if (!pos) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const planStart = getWeekStartDate(raceDate, 1);
+    const planStart = getWeekStartDate(raceDate, 1, totalWeeks);
     planStart.setHours(0, 0, 0, 0);
     const daysUntil = Math.round((planStart - today) / 86400000);
 
@@ -51,7 +52,7 @@ export default function TodayCard({ raceDate, planKey, navigation }) {
   // dayIndex is the calendar slot; map it through any swap to the actual workout.
   const order = getWeekOrder(planKey, week);
   const day = PLAN[week - 1].days[order[dayIndex]];
-  const date = getDayDate(raceDate, week, dayIndex);
+  const date = getDayDate(raceDate, week, dayIndex, totalWeeks);
   const color = WORKOUT_COLORS[day.type];
   const isRace = day.description === 'RACE DAY';
 

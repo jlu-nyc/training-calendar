@@ -14,9 +14,9 @@ const METRICS = [
   { label: 'Peak week', get: (s) => s.peakWeek.miles },
   { label: 'Longest run', get: (s) => s.longestRun },
   {
-    label: 'Marathon-pace miles',
+    label: 'Race-pace miles',
     color: WORKOUT_COLORS[WORKOUT_TYPES.MARATHON_PACE],
-    get: (s) => s.mpMiles,
+    get: (s) => s.racePaceMiles,
   },
   {
     label: 'Threshold sessions',
@@ -29,9 +29,9 @@ const METRICS = [
     get: (s) => s.counts.vo2max,
   },
   {
-    label: 'Marathon-pace runs',
+    label: 'Race-pace runs',
     color: WORKOUT_COLORS[WORKOUT_TYPES.MARATHON_PACE],
-    get: (s) => s.counts.marathonPace,
+    get: (s) => s.counts.racePace,
   },
   {
     label: 'Tune-up races',

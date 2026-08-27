@@ -5,41 +5,26 @@
       <stop offset="50%" stop-color="#FF8A3D"/>
       <stop offset="100%" stop-color="#FF4D7A"/>
     </linearGradient>
-    <pattern id="checker" width="64" height="64" patternUnits="userSpaceOnUse">
-      <rect width="64" height="64" fill="#FFFFFF"/>
-      <rect width="32" height="32" fill="#1A1A2E"/>
-      <rect x="32" y="32" width="32" height="32" fill="#1A1A2E"/>
-    </pattern>
   </defs>
 
   <!-- Full-bleed background; iOS/Android apply their own icon masks -->
   <rect width="512" height="512" fill="url(#bg)"/>
 
-  <!-- Motion / speed lines for energy -->
-  <g stroke="#FFFFFF" stroke-opacity="0.5" stroke-width="10" stroke-linecap="round">
-    <line x1="48" y1="176" x2="130" y2="176"/>
-    <line x1="40" y1="216" x2="146" y2="216"/>
-    <line x1="60" y1="256" x2="122" y2="256"/>
-  </g>
-
-  <!-- Runner figure, scaled 16x from a 32px pictogram -->
-  <g transform="scale(16)">
+  <!-- Runner, mid-stride: forward-leaning torso, wide scissor stance
+       (front leg reaching down, back leg trailing down), arms swinging
+       opposite the legs. -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
     <!-- Head -->
-    <circle cx="20" cy="7" r="2.6" fill="#FFFFFF"/>
-    <!-- Body -->
-    <line x1="20" y1="9.5" x2="18" y2="16" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
-    <!-- Left arm (forward) -->
-    <line x1="19" y1="12" x2="13" y2="11" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-    <!-- Right arm (back) -->
-    <line x1="19" y1="12" x2="23" y2="14" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-    <!-- Left leg (forward/down) -->
-    <line x1="18" y1="16" x2="13" y2="21" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-    <line x1="13" y1="21" x2="11" y2="25" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-    <!-- Right leg (back/up), slightly deeper tone for depth -->
-    <line x1="18" y1="16" x2="22" y2="19" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round"/>
-    <line x1="22" y1="19" x2="25" y2="16" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="292" cy="123" r="36" fill="#FFFFFF"/>
+    <!-- Torso -->
+    <line x1="270" y1="166" x2="241" y2="253" stroke="#FFFFFF" stroke-width="36"/>
+    <!-- Front arm, swung forward -->
+    <path d="M270,166 L300,190 L340,175" stroke="#FFFFFF" stroke-width="29"/>
+    <!-- Back arm, swung back -->
+    <path d="M270,166 L227,195 L191,174" stroke="#1A1A2E" stroke-width="29"/>
+    <!-- Front leg, reaching down toward the ground -->
+    <path d="M241,253 L292,289 L321,390" stroke="#FFFFFF" stroke-width="29"/>
+    <!-- Back leg, trailing down and back -->
+    <path d="M241,253 L191,303 L162,390" stroke="#1A1A2E" stroke-width="29"/>
   </g>
-
-  <!-- Checkered finish-line stripe -->
-  <rect x="0" y="448" width="512" height="64" fill="url(#checker)"/>
 </svg>

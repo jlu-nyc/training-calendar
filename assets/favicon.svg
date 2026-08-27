@@ -7,13 +7,18 @@
     </linearGradient>
   </defs>
   <rect width="32" height="32" rx="6" fill="url(#bg)"/>
-  <!-- Runner figure -->
-  <circle cx="20" cy="7" r="2.6" fill="#FFFFFF"/>
-  <line x1="20" y1="9.5" x2="18" y2="16" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
-  <line x1="19" y1="12" x2="13" y2="11" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-  <line x1="19" y1="12" x2="23" y2="14" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-  <line x1="18" y1="16" x2="13" y2="21" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-  <line x1="13" y1="21" x2="11" y2="25" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-  <line x1="18" y1="16" x2="22" y2="19" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round"/>
-  <line x1="22" y1="19" x2="25" y2="16" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Head -->
+    <circle cx="18.25" cy="7.69" r="2.25" fill="#FFFFFF"/>
+    <!-- Torso -->
+    <line x1="16.88" y1="10.38" x2="15.06" y2="15.81" stroke="#FFFFFF" stroke-width="2.25"/>
+    <!-- Front arm -->
+    <path d="M16.88,10.38 L18.75,11.88 L21.25,10.94" stroke="#FFFFFF" stroke-width="1.81"/>
+    <!-- Back arm -->
+    <path d="M16.88,10.38 L14.19,12.19 L11.94,10.88" stroke="#1A1A2E" stroke-width="1.81"/>
+    <!-- Front leg -->
+    <path d="M15.06,15.81 L18.25,18.06 L20.06,24.38" stroke="#FFFFFF" stroke-width="1.81"/>
+    <!-- Back leg -->
+    <path d="M15.06,15.81 L11.94,18.94 L10.13,24.38" stroke="#1A1A2E" stroke-width="1.81"/>
+  </g>
 </svg>

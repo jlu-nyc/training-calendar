@@ -82,6 +82,7 @@ export function planStats(plan) {
   });
 
   return {
+    totalWeeks: plan.length,
     totalMiles: Math.round(totalMiles),
     peakWeek,
     longestRun,

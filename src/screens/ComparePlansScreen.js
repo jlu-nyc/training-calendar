@@ -9,6 +9,7 @@ const PLAN_KEYS = Object.keys(PLANS);
 // each pulls one value from a plan's stats. `color` (optional) tints the leading
 // dot to tie a workout-type row to the app's color language.
 const METRICS = [
+  { label: 'Total weeks', get: (s) => s.totalWeeks },
   { label: 'Total miles', get: (s) => s.totalMiles },
   { label: 'Peak week', get: (s) => s.peakWeek.miles },
   { label: 'Longest run', get: (s) => s.longestRun },
@@ -108,7 +109,7 @@ export default function ComparePlansScreen({ route }) {
       </View>
 
       <Text style={styles.footnote}>
-        All plans are 12-week, ~70 mpw builds. Higher value in each row is highlighted.
+        Higher value in each row is highlighted.
       </Text>
     </ScrollView>
   );

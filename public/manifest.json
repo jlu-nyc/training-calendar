@@ -1,6 +1,6 @@
 {
-  "name": "Training Calendar",
-  "short_name": "Training",
+  "name": "Race Day",
+  "short_name": "Race Day",
   "description": "Marathon training plan calendar",
   "start_url": "/",
   "scope": "/",

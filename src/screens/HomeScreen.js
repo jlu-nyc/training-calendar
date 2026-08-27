@@ -78,9 +78,6 @@ export default function HomeScreen({ navigation }) {
     storage.setPlanKey(key);
   };
 
-  const planStart = new Date(raceDate);
-  planStart.setDate(planStart.getDate() - 83);
-
   const openPicker = () => {
     setTempDate(raceDate);
     setShowPicker(true);
@@ -99,7 +96,6 @@ export default function HomeScreen({ navigation }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>RACE DAY</Text>
-      <Text style={styles.subtitle}>59 - 71ish mpw · 12 weeks</Text>
 
       <View style={styles.card}>
         <Text style={styles.cardLabel}>Race Day</Text>
@@ -152,17 +148,17 @@ export default function HomeScreen({ navigation }) {
             )}
           </>
         )}
-
-        <View style={styles.divider} />
-
-        <Text style={styles.infoLabel}>Training begins</Text>
-        <Text style={styles.infoValue}>{toLocalDateString(planStart)}</Text>
       </View>
 
-            <TodayCard raceDate={raceDate} planKey={planKey} navigation={navigation} />
+      <TodayCard raceDate={raceDate} planKey={planKey} navigation={navigation} />
 
       <View style={styles.card}>
-        <Text style={styles.cardLabel}>Plan</Text>
+        <View style={styles.planHeaderRow}>
+          <Text style={[styles.cardLabel, styles.planHeaderLabel]}>Choose Plan</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Compare', { planKey })}>
+            <Text style={styles.compareLinkText}>(Compare plans)</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.planSelector}>
           {Object.values(PLANS).map((p) => {
             const active = planKey === p.key;
@@ -182,12 +178,6 @@ export default function HomeScreen({ navigation }) {
             );
           })}
         </View>
-        <TouchableOpacity
-          style={styles.compareLink}
-          onPress={() => navigation.navigate('Compare', { planKey })}
-        >
-          <Text style={styles.compareLinkText}>Compare plans →</Text>
-        </TouchableOpacity>
       </View>
 
       <TouchableOpacity
@@ -253,14 +243,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     textAlign: 'center',
     lineHeight: 42,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#7986cb',
-    letterSpacing: 1.5,
-    textTransform: 'uppercase',
-    marginBottom: 40,
+    marginBottom: 32,
   },
   card: {
     backgroundColor: '#1e1e3a',
@@ -287,22 +270,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#ffffff',
     textAlign: 'center',
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#2a2a4a',
-    marginVertical: 16,
-  },
-  infoLabel: {
-    fontSize: 12,
-    color: '#7986cb',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    marginBottom: 4,
-  },
-  infoValue: {
-    fontSize: 14,
-    color: '#b0bec5',
   },
   button: {
     backgroundColor: '#5c6bc0',
@@ -350,6 +317,15 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
   },
+  planHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  planHeaderLabel: {
+    marginBottom: 0,
+  },
   planSelector: {
     flexDirection: 'row',
     gap: 10,
@@ -381,15 +357,10 @@ const styles = StyleSheet.create({
   planOptionSubActive: {
     color: 'rgba(255,255,255,0.75)',
   },
-  compareLink: {
-    marginTop: 14,
-    alignSelf: 'center',
-    paddingVertical: 4,
-  },
   compareLinkText: {
-    fontSize: 13,
-    color: '#7986cb',
-    fontWeight: '600',
+    fontSize: 11,
+    color: '#546e7a',
+    fontWeight: '500',
   },
   buttonSecondary: {
     borderRadius: 12,

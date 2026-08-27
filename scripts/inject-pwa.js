@@ -16,7 +16,7 @@ const TAGS = `    <link rel="manifest" href="/manifest.json" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="apple-mobile-web-app-title" content="Training" />
+    <meta name="apple-mobile-web-app-title" content="Race Day" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <style>html, body { background-color: #0f0f23; }</style>

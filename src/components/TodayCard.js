@@ -9,6 +9,7 @@ import {
   getWeekStartDate,
   getDayLabel,
   formatDate,
+  formatFullDate,
 } from '../utils/dateUtils';
 
 // A glance card for the home screen: what's on today's schedule for the
@@ -26,19 +27,22 @@ export default function TodayCard({ raceDate, planKey, navigation }) {
     planStart.setHours(0, 0, 0, 0);
     const daysUntil = Math.round((planStart - today) / 86400000);
 
-    let message;
     if (daysUntil > 0) {
-      message =
-        daysUntil === 1
-          ? 'Training begins tomorrow.'
-          : `Training begins in ${daysUntil} days.`;
-    } else {
-      message = 'This training plan is complete. 🎉';
+      return (
+        <View style={[styles.card, styles.cardMuted]}>
+          <Text style={styles.todayLabel}>Training Begins</Text>
+          <Text style={styles.trainingBeginsDate}>{formatFullDate(planStart)}</Text>
+          <Text style={styles.mutedMessage}>
+            {daysUntil === 1 ? 'Tomorrow' : `In ${daysUntil} days`}
+          </Text>
+        </View>
+      );
     }
+
     return (
       <View style={[styles.card, styles.cardMuted]}>
         <Text style={styles.todayLabel}>Today</Text>
-        <Text style={styles.mutedMessage}>{message}</Text>
+        <Text style={styles.mutedMessage}>This training plan is complete. 🎉</Text>
       </View>
     );
   }
@@ -147,6 +151,12 @@ const styles = StyleSheet.create({
   mutedMessage: {
     fontSize: 15,
     color: '#b0bec5',
+  },
+  trainingBeginsDate: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#ffffff',
+    marginBottom: 6,
   },
   dateText: {
     fontSize: 13,

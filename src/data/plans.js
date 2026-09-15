@@ -7,25 +7,25 @@ export const PLANS = {
   classic: {
     key: 'classic',
     name: 'Classic',
-    subtitle: '12 wks · GA + VO2max focus',
+    subtitle: 'Marathon · 12 wks · GA + VO2max focus',
     plan: CLASSIC_PLAN,
   },
   threshold: {
     key: 'threshold',
     name: 'Threshold',
-    subtitle: '12 wks · LT emphasis',
+    subtitle: 'Marathon · 12 wks · LT emphasis',
     plan: THRESHOLD_PLAN,
   },
   half: {
     key: 'half',
     name: 'Half',
-    subtitle: '8 wks · GA + VO2max focus',
+    subtitle: 'Half Marathon · 8 wks · GA + VO2max focus',
     plan: HALF_PLAN,
   },
   mile: {
     key: 'mile',
     name: 'Mile',
-    subtitle: '6 wks · VO2max focus',
+    subtitle: 'Mile · 6 wks · VO2max focus',
     plan: MILE_PLAN,
   },
 };

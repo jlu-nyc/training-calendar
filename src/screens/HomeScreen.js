@@ -150,8 +150,6 @@ export default function HomeScreen({ navigation }) {
         )}
       </View>
 
-      <TodayCard raceDate={raceDate} planKey={planKey} navigation={navigation} />
-
       <View style={styles.card}>
         <View style={styles.planHeaderRow}>
           <Text style={[styles.cardLabel, styles.planHeaderLabel]}>Choose Plan</Text>
@@ -180,11 +178,13 @@ export default function HomeScreen({ navigation }) {
         </View>
       </View>
 
+      <TodayCard raceDate={raceDate} planKey={planKey} navigation={navigation} />
+
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('Calendar', { raceDate: raceDate.toISOString(), planKey })}
       >
-        <Text style={styles.buttonText}>View Calendar</Text>
+        <Text style={styles.buttonText}>View Full Calendar</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
